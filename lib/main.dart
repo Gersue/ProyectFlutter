@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -58,8 +57,11 @@ class MyPieChart extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                '${porcentaje.toStringAsFixed(2)}%',
-                style: TextStyle(fontSize: 32),
+                  'Gastado: ${porcentaje.toStringAsFixed(2)}%',
+                style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
               ),
             ),
           ),
@@ -78,35 +80,153 @@ class SecondView extends StatefulWidget {
   @override
   _SecondViewState createState() => _SecondViewState();
 }
+//Clase Gasto
+class Gasto {
+  String nombre;
+  double cantidad;
+  List<String> tipos;
+
+  Gasto({required this.nombre, required this.cantidad, required this.tipos});
+}
 
 class _SecondViewState extends State<SecondView> {
   final TextEditingController textEditingController = TextEditingController();
   double gasto = 0.0;
+  List<Gasto> listaGastos = [];
+  bool reiniciar = false;
 
   void calcularPorcentaje() {
     double monto = double.parse(textEditingController.text);
     if (monto > widget.capital) {
-      //Mandar mensaje es como tipo alert
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('El gasto no puede superar el presupuesto disponible'),
-            width: 200,
-            backgroundColor: Colors.indigo,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                color: Colors.grey,
-                width: 1,
-              ),
+          width: 200,
+          backgroundColor: Colors.indigo,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: Colors.grey,
+              width: 1,
             ),
-            behavior: SnackBarBehavior.floating,
+          ),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } else {
       setState(() {
         gasto = monto;
+        reiniciar = true;
       });
     }
+  }
+
+  void mostrarModalAgregarGasto() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String nuevoNombre = '';
+        double nuevaCantidad = 0.0;
+        List<String> nuevoTipos = [];
+
+        return AlertDialog(
+          title: Text('Agregar Gasto'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    nuevoNombre = value;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Nombre',
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  onChanged: (value) {
+                    nuevaCantidad = double.parse(value);
+                  },
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Cantidad',
+                  ),
+                ),
+                SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  onChanged: (value) {
+                    if (nuevoTipos.contains(value!)) {
+                      nuevoTipos.remove(value);
+                    } else {
+                      nuevoTipos.add(value!);
+                    }
+                  },
+                  value: nuevoTipos.isNotEmpty ? nuevoTipos[0] : null, // Agregar esta línea
+                  decoration: InputDecoration(
+                    labelText: 'Tipo',
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'ahorro',
+                      child: Text('Ahorro'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'comida',
+                      child: Text('Comida'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'casa',
+                      child: Text('Casa'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'ocio',
+                      child: Text('Ocio'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'salud',
+                      child: Text('Salud'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'gastos',
+                      child: Text('Gastos'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'suscripciones',
+                      child: Text('Suscripciones'),
+                    )
+                  ],
+                ),
+
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  Gasto nuevoGasto = Gasto(
+                    nombre: nuevoNombre,
+                    cantidad: nuevaCantidad,
+                    tipos: nuevoTipos,
+                  );
+                  listaGastos.add(nuevoGasto);
+                  reiniciar = false; // Establecer reiniciar en true al agregar un gasto
+                });
+
+                Navigator.of(context).pop();
+              },
+              child: Text('Agregar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -123,49 +243,70 @@ class _SecondViewState extends State<SecondView> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ListTile(
-                  title: Text('Capital guardado: ${widget.capital}'),
+                  title: Text('Capital: ${widget.capital}'),
                 ),
                 SizedBox(height: 16),
-                Container(
-                  width: 200,
-                  height: 200,
-                  padding: EdgeInsets.all(16),
-                  child: MyPieChart(capital: widget.capital, gasto: gasto),
-                ),
-                //Agregar un widget para formulario
-                SizedBox(height: 16),
-                Container(
-                  width: 500,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey,
-                      width: 1.0,
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 200,
+                      height: 200,
+                      padding: EdgeInsets.all(16),
+                      child: MyPieChart(capital: widget.capital, gasto: gasto),
                     ),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Form(
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          controller: textEditingController,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
+                    Container(
+                      margin: EdgeInsets.only(top: 40),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SizedBox(height: 16),
+                            Visibility(
+                              visible: reiniciar,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    gasto = 0.0;
+                                    reiniciar = false;
+                                  });
+                                },
+                                child: Text(
+                                  "Reiniciar",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          decoration: InputDecoration(
-                            hintText: "Ingrese un valor",
-                          ),
                         ),
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            calcularPorcentaje();
-                          },
-                          child: Text("Enviar"),
-                        ),
-                      ],
+                      ),
                     ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    mostrarModalAgregarGasto();
+                  },
+                  child: Text("Agregar Gasto"),
+                ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listaGastos.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Gasto gasto = listaGastos[index];
+                      return ListTile(
+                        title: Text(gasto.nombre),
+                        subtitle: Text('Cantidad: ${gasto.cantidad}'),
+                        trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -176,8 +317,6 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 }
-
-
 
 
 class _CapitalInputWidgetState extends State<CapitalInputWidget> {

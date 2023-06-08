@@ -91,12 +91,12 @@ class _SecondViewState extends State<SecondView> {
       //Mandar mensaje es como tipo alert
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('El gasto no puede superar el presupuesto disponible'),
+          content: const Text('El gasto no puede superar el presupuesto disponible'),
             width: 200,
             backgroundColor: Colors.indigo,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
+              side: const BorderSide(
                 color: Colors.grey,
                 width: 1,
               ),
@@ -117,66 +117,72 @@ class _SecondViewState extends State<SecondView> {
       appBar: AppBar(
         title: Text('Control de Presupuesto'),
       ),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  title: Text('Capital guardado: ${widget.capital}'),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  width: 200,
-                  height: 200,
-                  padding: EdgeInsets.all(16),
-                  child: MyPieChart(capital: widget.capital, gasto: gasto),
-                ),
-                //Agregar un widget para formulario
-                SizedBox(height: 16),
-                Container(
-                  width: 500,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey,
-                      width: 1.0,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:[
+              Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ListTile(
+                      title: Text('Capital guardado: ${widget.capital}'),
                     ),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Form(
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          controller: textEditingController,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
+                    const SizedBox(height: 16),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      padding: EdgeInsets.all(16),
+                      child: MyPieChart(capital: widget.capital, gasto: gasto),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: Form(
+                        child: Column(
+                          children: <Widget>[
+                            Flexible(
+                              child: TextFormField(
+                                controller: textEditingController,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                decoration: const InputDecoration(
+                                  hintText: "Ingrese un valor",
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                calcularPorcentaje();
+                              },
+                              child: const Text("Enviar"),
+                            ),
                           ],
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          decoration: InputDecoration(
-                            hintText: "Ingrese un valor",
-                          ),
                         ),
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            calcularPorcentaje();
-                          },
-                          child: Text("Enviar"),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              )
+            ] ,
+         ),
         ),
       ),
     );
   }
+
 }
 
 
@@ -199,7 +205,7 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
+      child:  SizedBox(
         width: 300,
         height: 200,
         child: Card(
@@ -207,7 +213,7 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          margin: EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.all(16.0),
@@ -243,10 +249,10 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
                     },
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: ElevatedButton(
                       onPressed: _saveCapital,
-                      child: Text('Guardar'),
+                      child: const Text('Guardar'),
                     ),
                   ),
                 ],

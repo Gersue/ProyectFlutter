@@ -3,25 +3,32 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// este comentario para subir commit a mi rama Danny
+
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Presupuesto',
-      debugShowCheckedModeBanner: false, //Propiedad para quitar el banner del debug
+      title: 'Presupuesto',//Propiedad para quitar el banner del debug
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Gastos de Presupuestos'),
+            title: const Text('Gastos de Presupuestos')
         ),
-        body: Center(
-          child: CapitalInputWidget(),
+        body: const Padding(padding: EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                CapitalInputWidget()
+              ],
+            )
         ),
       ),
     );
@@ -29,6 +36,8 @@ class MyApp extends StatelessWidget {
 }
 
 class CapitalInputWidget extends StatefulWidget {
+  const CapitalInputWidget({super.key});
+
   @override
   _CapitalInputWidgetState createState() => _CapitalInputWidgetState();
 }
@@ -38,7 +47,7 @@ class MyPieChart extends StatelessWidget {
   final double capital;
   final double gasto;
 
-  MyPieChart({required this.capital, required this.gasto});
+  const MyPieChart({super.key, required this.capital, required this.gasto});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +56,7 @@ class MyPieChart extends StatelessWidget {
     return Center(
       child: Stack(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: CircularProgressIndicator(
@@ -59,7 +68,7 @@ class MyPieChart extends StatelessWidget {
             child: Center(
               child: Text(
                 '${porcentaje.toStringAsFixed(2)}%',
-                style: TextStyle(fontSize: 32),
+                style: const TextStyle(fontSize: 32),
               ),
             ),
           ),
@@ -73,7 +82,7 @@ class MyPieChart extends StatelessWidget {
 class SecondView extends StatefulWidget {
   final double capital;
 
-  SecondView({required this.capital});
+  const SecondView({super.key, required this.capital});
 
   @override
   _SecondViewState createState() => _SecondViewState();
@@ -90,16 +99,16 @@ class _SecondViewState extends State<SecondView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('El gasto no puede superar el presupuesto disponible'),
-            width: 200,
-            backgroundColor: Colors.indigo,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: const BorderSide(
-                color: Colors.grey,
-                width: 1,
-              ),
+          width: 200,
+          backgroundColor: Colors.indigo,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(
+              color: Colors.grey,
+              width: 1,
             ),
-            behavior: SnackBarBehavior.floating,
+          ),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } else {
@@ -113,75 +122,73 @@ class _SecondViewState extends State<SecondView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Control de Presupuesto'),
+        title: const Text('Control de Presupuesto'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              Card(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ListTile(
-                      title: Text('Capital guardado: ${widget.capital}'),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      padding: EdgeInsets.all(16),
-                      child: MyPieChart(capital: widget.capital, gasto: gasto),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ListTile(
+                    title: Text('Capital guardado: ${widget.capital}'),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    padding: const EdgeInsets.all(5),
+                    child: MyPieChart(capital: widget.capital, gasto: gasto),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1.0,
                       ),
-                      child: Form(
-                        child: Column(
-                          children: <Widget>[
-                            Flexible(
-                              child: TextFormField(
-                                controller: textEditingController,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                decoration: const InputDecoration(
-                                  hintText: "Ingrese un valor",
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                calcularPorcentaje();
-                              },
-                              child: const Text("Enviar"),
-                            ),
-                          ],
-                        ),
-                      ),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
-                  ],
-                ),
-              )
-            ] ,
-         ),
+                    child:  Column(
+                      children: <Widget>[
+                        Flexible(
+                          child: TextFormField(
+                            controller: textEditingController,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: const InputDecoration(
+                              hintText: "Ingrese un valor",
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            calcularPorcentaje();
+                          },
+                          child: const Text("Enviar"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+
 }
+
 
 
 
@@ -202,61 +209,48 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
   //Observemos en el TextField porque ahi es donde manejamos el error y hacemos el llamado a _saveCapital cuando presione el botton
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child:  SizedBox(
-        width: 300,
-        height: 200,
-        child: Card(
-          elevation: 4.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          margin: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Presupuesto',
-                      errorText: _errorText,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                    ),
-                    controller: _controller,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                    onChanged: (value) {
-                      setState(() {
-                        try {
-                          _capital = double.parse(value);
-                          if (_capital! < 0) {
-                            _errorText = 'El capital debe ser positivo';
-                          } else {
-                            _errorText = null;
-                          }
-                        } catch (e) {
-                          _errorText = 'Ingrese un número válido';
-                        }
-                      });
-                    },
-                    onSubmitted: (value) {
-                      if (_capital != null && _capital! >= 0) {
-                        _saveCapital();
-                      }
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ElevatedButton(
-                      onPressed: _saveCapital,
-                      child: const Text('Guardar'),
-                    ),
-                  ),
-                ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Presupuesto',
+                errorText: _errorText,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+              ),
+              controller: _controller,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (value) {
+                setState(() {
+                  try {
+                    _capital = double.parse(value);
+                    if (_capital! < 0) {
+                      _errorText = 'El capital debe ser positivo';
+                    } else {
+                      _errorText = null;
+                    }
+                  } catch (e) {
+                    _errorText = 'Ingrese un número válido';
+                  }
+                });
+              },
+              onSubmitted: (value) {
+                if (_capital != null && _capital! >= 0) {
+                  _saveCapital();
+                }
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ElevatedButton(
+                onPressed: _saveCapital,
+                child: const Text('Guardar'),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -272,4 +266,27 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
     }
   }
 
+}
+
+class Example1 extends StatelessWidget {
+  const Example1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(bottom: 30.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Explore the restaurant\'s delicious menu items below!',
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

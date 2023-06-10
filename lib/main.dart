@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Gastos de Presupuestos'),
+          title: const Text('Gastos de Presupuestos'),
         ),
         body: Center(
           child: CapitalInputWidget(),
@@ -37,7 +39,7 @@ class MyPieChart extends StatelessWidget {
   final double capital;
   final double gasto;
 
-  MyPieChart({required this.capital, required this.gasto});
+  const MyPieChart({super.key, required this.capital, required this.gasto});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class MyPieChart extends StatelessWidget {
     return Center(
       child: Stack(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: CircularProgressIndicator(
@@ -58,7 +60,7 @@ class MyPieChart extends StatelessWidget {
             child: Center(
               child: Text(
                   'Gastado: ${porcentaje.toStringAsFixed(2)}%',
-                style: TextStyle(
+                style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -105,7 +107,7 @@ class _SecondViewState extends State<SecondView> {
           backgroundColor: Colors.indigo,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
+            side: const BorderSide(
               color: Colors.grey,
               width: 1,
             ),
@@ -233,11 +235,11 @@ class _SecondViewState extends State<SecondView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Control de Presupuesto'),
+        title: const Text('Control de Presupuesto'),
       ),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -245,24 +247,24 @@ class _SecondViewState extends State<SecondView> {
                 ListTile(
                   title: Text('Capital: ${widget.capital}'),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
                       width: 200,
                       height: 200,
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: MyPieChart(capital: widget.capital, gasto: gasto),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 40),
+                      margin: const EdgeInsets.only(top: 40),
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Visibility(
                               visible: reiniciar,
                               child: ElevatedButton(
@@ -272,7 +274,7 @@ class _SecondViewState extends State<SecondView> {
                                     reiniciar = false;
                                   });
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Reiniciar",
                                   style: TextStyle(
                                     fontSize: 20,
@@ -287,14 +289,14 @@ class _SecondViewState extends State<SecondView> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     mostrarModalAgregarGasto();
                   },
-                  child: Text("Agregar Gasto"),
+                  child: const Text("Agregar Gasto"),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -336,7 +338,7 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 300,
         height: 200,
         child: Card(
@@ -344,10 +346,10 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          margin: EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -355,10 +357,10 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
                     decoration: InputDecoration(
                       labelText: 'Presupuesto',
                       errorText: _errorText,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
                     ),
                     controller: _controller,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     onChanged: (value) {
                       setState(() {
                         try {
@@ -380,10 +382,10 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
                     },
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: ElevatedButton(
                       onPressed: _saveCapital,
-                      child: Text('Guardar'),
+                      child: const Text('Guardar'),
                     ),
                   ),
                 ],
@@ -397,6 +399,7 @@ class _CapitalInputWidgetState extends State<CapitalInputWidget> {
 
 //Si no es nulo o mayor o igual a 0 mandamos a llamas la segunda vista  con Navigator push
   void _saveCapital() {
+
     if (_capital != null && _capital! >= 0) {
       Navigator.push(
         context,

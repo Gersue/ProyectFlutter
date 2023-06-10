@@ -1,7 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +14,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Gastos de Presupuestos'),
+          title: const Text('Gastos de Presupuestos'),
         ),
         body: Center(
           child: CapitalInputWidget(),
@@ -37,7 +34,7 @@ class MyPieChart extends StatelessWidget {
   final double capital;
   final double gasto;
 
-  MyPieChart({required this.capital, required this.gasto});
+  const MyPieChart({required this.capital, required this.gasto});
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +43,14 @@ class MyPieChart extends StatelessWidget {
     return Center(
       child: Stack(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: CircularProgressIndicator(
-              value: porcentaje / 100,
-              strokeWidth: 10,
+              child: CircularProgressIndicator(
+                value: porcentaje / 100,
+                strokeWidth: 10,
+              ),
             ),
-          ),
           Expanded(
             child: Center(
               child: Text(
@@ -83,10 +80,10 @@ class SecondView extends StatefulWidget {
 //Clase Gasto
 class Gasto {
   String nombre;
-  double cantidad;
+  double monto;
   List<String> tipos;
 
-  Gasto({required this.nombre, required this.cantidad, required this.tipos});
+  Gasto({required this.nombre, required this.monto, required this.tipos});
 }
 
 class _SecondViewState extends State<SecondView> {
@@ -96,8 +93,8 @@ class _SecondViewState extends State<SecondView> {
   bool reiniciar = false;
 
   void calcularPorcentaje() {
-    double monto = double.parse(textEditingController.text);
-    if (monto > widget.capital) {
+    double cantidad = double.parse(textEditingController.text);
+    if (cantidad > widget.capital) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('El gasto no puede superar el presupuesto disponible'),
@@ -115,7 +112,7 @@ class _SecondViewState extends State<SecondView> {
       );
     } else {
       setState(() {
-        gasto = monto;
+        gasto += cantidad; // Suma el nuevo gasto al gasto total
         reiniciar = true;
       });
     }
@@ -158,7 +155,7 @@ class _SecondViewState extends State<SecondView> {
                     if (nuevoTipos.contains(value!)) {
                       nuevoTipos.remove(value);
                     } else {
-                      nuevoTipos.add(value!);
+                      nuevoTipos.add(value);
                     }
                   },
                   value: nuevoTipos.isNotEmpty ? nuevoTipos[0] : null, // Agregar esta línea
@@ -196,7 +193,6 @@ class _SecondViewState extends State<SecondView> {
                     )
                   ],
                 ),
-
               ],
             ),
           ),
@@ -206,13 +202,13 @@ class _SecondViewState extends State<SecondView> {
                 setState(() {
                   Gasto nuevoGasto = Gasto(
                     nombre: nuevoNombre,
-                    cantidad: nuevaCantidad,
+                    monto: nuevaCantidad, // Utiliza el campo monto en lugar de cantidad
                     tipos: nuevoTipos,
                   );
                   listaGastos.add(nuevoGasto);
-                  reiniciar = false; // Establecer reiniciar en true al agregar un gasto
+                  gasto = listaGastos.fold(0, (total, gasto) => total + gasto.monto); // Suma los montos de la lista de gastos
+                  reiniciar = false;
                 });
-
                 Navigator.of(context).pop();
               },
               child: Text('Agregar'),
@@ -231,6 +227,8 @@ class _SecondViewState extends State<SecondView> {
 
   @override
   Widget build(BuildContext context) {
+    double disponible = widget.capital - gasto; // Calcula la cantidad disponible restando el gasto de la capital
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Control de Presupuesto'),
@@ -247,10 +245,10 @@ class _SecondViewState extends State<SecondView> {
                     title: Text('Capital: ${widget.capital}'),
                   ),
                   ListTile(
-                    title: Text('Disponible: ${widget.capital}'),
+                    title: Text('Disponible: $disponible'),
                   ),
                   ListTile(
-                    title: Text('Gasto: ${widget.capital}'),
+                    title: Text('Gasto: $gasto'),
                   ),
                   SizedBox(height: 16),
                   Stack(
@@ -315,7 +313,7 @@ class _SecondViewState extends State<SecondView> {
                         ),
                         child: ListTile(
                           title: Text(gasto.nombre),
-                          subtitle: Text('Cantidad: ${gasto.cantidad}'),
+                          subtitle: Text('Cantidad: ${gasto.monto}'),
                           trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
                         ),
                       );
@@ -325,12 +323,12 @@ class _SecondViewState extends State<SecondView> {
               ),
             ),
           ),
-
         ),
       ),
     );
   }
 }
+
 
 
 class _CapitalInputWidgetState extends State<CapitalInputWidget> {

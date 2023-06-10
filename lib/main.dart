@@ -60,11 +60,11 @@ class MyPieChart extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                  'Gastado: ${porcentaje.toStringAsFixed(2)}%',
+                'Gastado: ${porcentaje.toStringAsFixed(2)}%',
                 style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -97,6 +97,15 @@ class _SecondViewState extends State<SecondView> {
   double gasto = 0.0;
   List<Gasto> listaGastos = [];
   bool reiniciar = false;
+
+  int sumaLista(List<int> lista) {
+    int suma = 0;
+    for (int i = 0; i < lista.length; i++) {
+      suma += lista[i];
+    }
+    return suma;
+  }
+  
 
   void calcularPorcentaje() {
     double monto = double.parse(textEditingController.text);
@@ -226,7 +235,7 @@ class _SecondViewState extends State<SecondView> {
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
-                    listaGastos.add(Gasto(nombre: nuevoNombre, cantidad: nuevaCantidad, tipos: nuevoTipos));
+                    nuevaCantidad <= widget.capital ? listaGastos.add(Gasto(nombre: nuevoNombre, cantidad: nuevaCantidad, tipos: nuevoTipos)) : null;
                   });
                   Navigator.of(context).pop();
                 }
@@ -247,6 +256,8 @@ class _SecondViewState extends State<SecondView> {
 
   @override
   Widget build(BuildContext context) {
+    double totalGastado = sumaLista(listaGastos.map((e) => e.cantidad.toInt()).toList()).toDouble();
+    double disponible = widget.capital - totalGastado;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -262,6 +273,14 @@ class _SecondViewState extends State<SecondView> {
                 ListTile(
                   leading: const Icon(Icons.money),
                   title: Text('Capital:  ${widget.capital} ', style: const TextStyle(fontSize: 20)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.money_off),
+                  title: Text('Gasto:  $totalGastado ', style: const TextStyle(fontSize: 20)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.money),
+                  title: Text('Disponible:  $disponible ', style: const TextStyle(fontSize: 20)),
                 ),
                 const SizedBox(height: 16),
                 Stack(
@@ -320,7 +339,7 @@ class _SecondViewState extends State<SecondView> {
                     itemBuilder: (BuildContext context, int index) {
                       Gasto gasto = listaGastos[index];
                       return Container(
-                        color: Colors.greenAccent, // Establece el color de fondo deseado aquí
+                        color:  Colors.greenAccent, // Establece el color de fondo deseado aquí
                         child: ListTile(
                           title: Text(gasto.nombre),
                           subtitle: Text('Cantidad: ${gasto.cantidad}'),

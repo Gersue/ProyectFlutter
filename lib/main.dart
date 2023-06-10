@@ -238,80 +238,94 @@ class _SecondViewState extends State<SecondView> {
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20),
-          child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  title: Text('Capital: ${widget.capital}'),
-                ),
-                SizedBox(height: 16),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 200,
-                      padding: EdgeInsets.all(16),
-                      child: MyPieChart(capital: widget.capital, gasto: gasto),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 40),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SizedBox(height: 16),
-                            Visibility(
-                              visible: reiniciar,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    gasto = 0.0;
-                                    reiniciar = false;
-                                  });
-                                },
-                                child: Text(
-                                  "Reiniciar",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+          child: SingleChildScrollView(
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    title: Text('Capital: ${widget.capital}'),
+                  ),
+                  ListTile(
+                    title: Text('Disponible: ${widget.capital}'),
+                  ),
+                  ListTile(
+                    title: Text('Gasto: ${widget.capital}'),
+                  ),
+                  SizedBox(height: 16),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 200,
+                        height: 200,
+                        padding: EdgeInsets.all(16),
+                        child: MyPieChart(capital: widget.capital, gasto: gasto),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 40),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(height: 16),
+                              Visibility(
+                                visible: reiniciar,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      gasto = 0.0;
+                                      reiniciar = false;
+                                    });
+                                  },
+                                  child: Text(
+                                    "Reiniciar",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    mostrarModalAgregarGasto();
-                  },
-                  child: Text("Agregar Gasto"),
-                ),
-                SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      mostrarModalAgregarGasto();
+                    },
+                    child: Text("Agregar Gasto"),
+                  ),
+                  SizedBox(height: 16),
+                  ListView.builder(
                     shrinkWrap: true,
                     itemCount: listaGastos.length,
                     itemBuilder: (BuildContext context, int index) {
                       Gasto gasto = listaGastos[index];
-                      return ListTile(
-                        title: Text(gasto.nombre),
-                        subtitle: Text('Cantidad: ${gasto.cantidad}'),
-                        trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+                      return Container(
+                        margin: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blue, width: 2.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ListTile(
+                          title: Text(gasto.nombre),
+                          subtitle: Text('Cantidad: ${gasto.cantidad}'),
+                          trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+                        ),
                       );
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+
         ),
       ),
     );

@@ -357,6 +357,65 @@ class _SecondViewState extends State<SecondView> {
     });
   }
 
+  Icon? iconos(String i){
+
+    if(i == 'Ahorrar'){
+      return const Icon(
+        Icons.money,
+        color: Colors.green,
+        size: 35.0,
+        semanticLabel: 'Ahorros',
+      );}
+    if(i == 'Comida'){
+      return const Icon(
+        Icons.food_bank,
+        color: Colors.orange,
+        size: 35.0,
+        semanticLabel: 'Cualquier tipo de Comida',
+      );}
+    if(i == 'Casa'){
+      return const Icon(
+        Icons.home,
+        color: Colors.blue,
+        size: 35.0,
+        semanticLabel: 'Cualquier tipo de gasto en casa',
+      );}
+    if(i == 'Entretenimiento'){
+      return const Icon(
+        Icons.sports_esports,
+        color: Colors.black,
+        size: 35.0,
+        semanticLabel: 'Cualquier tipo de Entretenimiento',
+      );}
+    if(i == 'Salud'){
+      return const Icon(
+        Icons.local_hospital,
+        color: Colors.red,
+        size: 35.0,
+        semanticLabel: 'Cualquier gasto en salud',
+      );}
+    if(i == 'Gastos'){
+      return const Icon(
+        Icons.money,
+        color: Colors.green,
+        size: 35.0,
+        semanticLabel: 'Cualquier tipo de Gasto',
+      );}
+    if(i == 'Suscripciones'){
+      return const Icon(
+        Icons.subscriptions,
+        color: Colors.pink,
+        size: 35.0,
+        semanticLabel: 'Cualquier tipo de Suscripciones',
+      );}
+    return const Icon(
+      Icons.payments,
+      color: Colors.green,
+      size: 35.0,
+      semanticLabel: 'Cualquier tipo de Gasto',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double totalGastado = sumaLista(listaGastos.map((e) => e.cantidad.toInt()).toList()).toDouble();
@@ -461,7 +520,7 @@ class _SecondViewState extends State<SecondView> {
                               title: Text(gasto.nombre),
                               subtitle: Text('Cantidad: ${gasto.cantidad}'),
                               trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
-                              leading: Text('${gasto.estado}'),
+                              leading: iconos(gasto.tipos.join(', ')),
                             ),
                           )
                           ;

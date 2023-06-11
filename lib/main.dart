@@ -50,6 +50,22 @@ class MyPieChart extends StatelessWidget {
     var aux = (gasto / disponible) * 100;
     double porcentaje = aux.clamp(0, 100);
 
+    Color progress(double i) {
+      Color color;
+      if (i >= 0.0 && i <= 0.25) {
+        color = Colors.orange;
+      } else if (i > 0.26 && i <= 0.50) {
+        color = Colors.yellow;
+      } else if (i > 0.51 && i <= 0.75) {
+        color = Colors.green;
+      } else if (i > 0.76 && i <= 0.99) {
+        color = Colors.green;
+      } else {
+        color = Colors.blue;
+      }
+      return color;
+    }
+
     return Center(
       child: Stack(
         children: [
@@ -57,8 +73,9 @@ class MyPieChart extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
             child: CircularProgressIndicator(
-              value:  porcentaje.isInfinite ? 0.0 : porcentaje,
+              value:  porcentaje.isInfinite ? 0.0 : porcentaje / 100,
               strokeWidth: 10,
+              color: progress(porcentaje / 100),
             ),
           ),
           Expanded(
@@ -66,7 +83,7 @@ class MyPieChart extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Text(
-                  'Gastado: ${porcentaje.isInfinite ? 0.0 : porcentaje}%',
+                  'Gastado: ${porcentaje.isInfinite ? 0.0 : porcentaje.toStringAsFixed(1)}%',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -104,6 +121,7 @@ class _SecondViewState extends State<SecondView> {
   List<Gasto> listaGastos = [];
   bool reiniciar = false;
   late double saldo = 0.0;
+   late double disponible;
 
   int sumaLista(List<int> lista) {
     int suma = 0;
@@ -112,7 +130,6 @@ class _SecondViewState extends State<SecondView> {
     }
     return suma;
   }
-  
 
   void calcularPorcentaje() {
     double monto = double.parse(textEditingController.text);
@@ -311,16 +328,7 @@ class _SecondViewState extends State<SecondView> {
 
                   Navigator.of(context).pop();
                 } else {
-                  setState(() {
-                    nuevaCantidad <= widget.capital
-                        ? listaGastos.add(Gasto(
-                            nombre: nuevoNombre,
-                            cantidad: nuevaCantidad,
-                            tipos: nuevoTipos,
-                            estado: saldo.isNegative ? true : false,
-                            ))
-                        : null;
-                  });
+                  setGastos(nuevoNombre, nuevaCantidad, nuevoTipos);
                   Navigator.of(context).pop();
                 }
               },
@@ -338,10 +346,23 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 
+  void setGastos(String arg1, double arg2, List<String> arg3){
+    setState(() {
+      listaGastos.add(Gasto(
+        nombre: arg1,
+        cantidad: arg2,
+        tipos: arg3,
+        estado: disponible <= 0,
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double totalGastado = sumaLista(listaGastos.map((e) => e.cantidad.toInt()).toList()).toDouble();
-    double disponible = widget.capital - totalGastado;
+    disponible = widget.capital - totalGastado;
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -427,10 +448,11 @@ class _SecondViewState extends State<SecondView> {
                         itemBuilder: (BuildContext context, int index) {
                           Gasto gasto = listaGastos[index];
                           return Container(
+                            margin: const EdgeInsets.all(1.0),
                             foregroundDecoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: Colors.blueGrey,
+                                color: !gasto.estado ? Colors.greenAccent : Colors.red,
                                 width: 1.0,
                               ),
                             ),
@@ -439,6 +461,7 @@ class _SecondViewState extends State<SecondView> {
                               title: Text(gasto.nombre),
                               subtitle: Text('Cantidad: ${gasto.cantidad}'),
                               trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+                              leading: Text('${gasto.estado}'),
                             ),
                           )
                           ;

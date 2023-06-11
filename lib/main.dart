@@ -83,7 +83,7 @@ class MyPieChart extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Text(
-                  'Gastado: ${porcentaje.isInfinite ? 0.0 : porcentaje.toStringAsFixed(1)}%',
+                  '${porcentaje.isInfinite ? 0.0 : porcentaje.toStringAsFixed(1)}%',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -121,7 +121,8 @@ class _SecondViewState extends State<SecondView> {
   List<Gasto> listaGastos = [];
   bool reiniciar = false;
   late double saldo = 0.0;
-   late double disponible;
+  late double disponible;
+  String tipo = '';
 
   int sumaLista(List<int> lista) {
     int suma = 0;
@@ -302,7 +303,6 @@ class _SecondViewState extends State<SecondView> {
                     )
                   ],
                 ),
-
               ],
             ),
           ),
@@ -416,6 +416,39 @@ class _SecondViewState extends State<SecondView> {
     );
   }
 
+  StatelessWidget? lista(String i, Gasto gasto){
+    var tipos = gasto.tipos.join(', ');
+    print('los tipos son: $tipos');
+    print('el i es: $i');
+
+    if(i == tipos){
+     return ListTile(
+        title: Text(gasto.nombre),
+        subtitle: Text('Cantidad: ${gasto.cantidad}'),
+        trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+        leading: iconos(gasto.tipos.join(', ')),
+      );
+    }
+
+    if(i == 'Todos'){
+     return ListTile(
+        title: Text(gasto.nombre),
+        subtitle: Text('Cantidad: ${gasto.cantidad}'),
+        trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+        leading: iconos(gasto.tipos.join(', ')),
+      );
+    }
+    if(i == ''){
+      return ListTile(
+        title: Text(gasto.nombre),
+        subtitle: Text('Cantidad: ${gasto.cantidad}'),
+        trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+        leading: iconos(gasto.tipos.join(', ')),
+      );
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     double totalGastado = sumaLista(listaGastos.map((e) => e.cantidad.toInt()).toList()).toDouble();
@@ -498,10 +531,135 @@ class _SecondViewState extends State<SecondView> {
                     child: const Text("Agregar Gasto"),
                   ),
                   const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    onChanged: (value) {
+                      setState(() {
+                        tipo = value!;
+                      });
+                    },
+                    value:  null, // Agregar esta línea
+                    decoration: const InputDecoration(
+                      labelText: 'Filtra por tipo de gasto',
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'Todos',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.align_horizontal_left,
+                              color: Colors.cyan,
+                              size: 24.0,
+                              semanticLabel: 'Todos',
+                            ),
+                            Text('Todos'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Ahorrar',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.money,
+                              color: Colors.green,
+                              size: 24.0,
+                              semanticLabel: 'Ahorros',
+                            ),
+                            Text('Ahorrar'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Comida',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.food_bank,
+                              color: Colors.orange,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier tipo de Comida',
+                            ),
+                            Text('Comida'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Casa',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.home,
+                              color: Colors.blue,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier tipo de gasto en casa',
+                            ),
+                            Text('Casa'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Entretenimiento',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.sports_esports,
+                              color: Colors.black,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier tipo de Entretenimiento',
+                            ),
+                            Text('Entretenimiento'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Salud',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.local_hospital,
+                              color: Colors.red,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier gasto en salud',
+                            ),
+                            Text('Salud'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Gastos',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.money,
+                              color: Colors.green,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier tipo de Gasto',
+                            ),
+                            Text('Gastos'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Suscripciones',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.subscriptions,
+                              color: Colors.pink,
+                              size: 24.0,
+                              semanticLabel: 'Cualquier tipo de Suscripciones',
+                            ),
+                            Text('Suscripciones'),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
+                      child: !listaGastos.isEmpty ? ListView.builder(
                         shrinkWrap: true,
                         itemCount: listaGastos.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -516,16 +674,19 @@ class _SecondViewState extends State<SecondView> {
                               ),
                             ),
                             //color: !gasto.estado ? Colors.greenAccent : Colors.red, // Establece el color de fondo deseado aquí
-                            child:  ListTile(
-                              title: Text(gasto.nombre),
-                              subtitle: Text('Cantidad: ${gasto.cantidad}'),
-                              trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
-                              leading: iconos(gasto.tipos.join(', ')),
-                            ),
+                            child: lista(tipo, gasto),
                           )
                           ;
                         },
-                      ),
+                      ) : const Center(
+                        child: Text(
+                          "No hay Gastos",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
                     ),
                   ),
                 ],

@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -37,14 +38,17 @@ class CapitalInputWidget extends StatefulWidget {
 
 //Grafica
 class MyPieChart extends StatelessWidget {
-  final double capital;
-  final double gasto;
+  final double disponible ;
+  final double gasto ;
 
-  const MyPieChart({super.key, required this.capital, required this.gasto});
+  const MyPieChart({super.key, required this.disponible, required this.gasto});
 
   @override
   Widget build(BuildContext context) {
-    double porcentaje = (gasto / capital) * 100;
+    //double porcentaje = gasto > 0.0 ?  disponible - gasto  : gasto;
+    //double porcentaje  =   (disponible * gasto) / 100 ;
+    var aux = (gasto / disponible) * 100;
+    double porcentaje = aux.clamp(0, 100);
 
     return Center(
       child: Stack(
@@ -53,17 +57,20 @@ class MyPieChart extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
             child: CircularProgressIndicator(
-              value: porcentaje.isNegative  ? porcentaje / 100 : porcentaje,
+              value:  porcentaje.isInfinite ? 0.0 : porcentaje,
               strokeWidth: 10,
             ),
           ),
           Expanded(
-            child: Center(
-              child: Text(
-                'Gastado: ${porcentaje.toStringAsFixed(2)}%',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(
+                child: Text(
+                  'Gastado: ${porcentaje.isInfinite ? 0.0 : porcentaje}%',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -77,8 +84,7 @@ class MyPieChart extends StatelessWidget {
 
 class SecondView extends StatefulWidget {
   final double capital;
-
-  SecondView({required this.capital});
+  const SecondView({required this.capital});
 
   @override
   _SecondViewState createState() => _SecondViewState();
@@ -88,8 +94,8 @@ class Gasto {
   String nombre;
   double cantidad;
   List<String> tipos;
-
-  Gasto({required this.nombre, required this.cantidad, required this.tipos});
+  bool estado = false;
+  Gasto({required this.nombre, required this.cantidad, required this.tipos, this.estado = false});
 }
 
 class _SecondViewState extends State<SecondView> {
@@ -97,6 +103,7 @@ class _SecondViewState extends State<SecondView> {
   double gasto = 0.0;
   List<Gasto> listaGastos = [];
   bool reiniciar = false;
+  late double saldo = 0.0;
 
   int sumaLista(List<int> lista) {
     int suma = 0;
@@ -179,32 +186,102 @@ class _SecondViewState extends State<SecondView> {
                   ),
                   items: const [
                     DropdownMenuItem(
-                      value: 'ahorro',
-                      child: Text('Ahorro'),
+                      value: 'Ahorrar',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.money,
+                            color: Colors.green,
+                            size: 24.0,
+                            semanticLabel: 'Ahorros',
+                          ),
+                          Text('Ahorrar'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'comida',
-                      child: Text('Comida'),
+                      value: 'Comida',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.food_bank,
+                            color: Colors.orange,
+                            size: 24.0,
+                            semanticLabel: 'Cualquier tipo de Comida',
+                          ),
+                          Text('Comida'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'casa',
-                      child: Text('Casa'),
+                      value: 'Casa',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.home,
+                            color: Colors.blue,
+                            size: 24.0,
+                            semanticLabel: 'Cualquier tipo de gasto en casa',
+                          ),
+                          Text('Casa'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'ocio',
-                      child: Text('Ocio'),
+                      value: 'Entretenimiento',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.sports_esports,
+                            color: Colors.black,
+                            size: 24.0,
+                            semanticLabel: 'Cualquier tipo de Entretenimiento',
+                          ),
+                          Text('Entretenimiento'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'salud',
-                      child: Text('Salud'),
+                      value: 'Salud',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.local_hospital,
+                            color: Colors.red,
+                            size: 24.0,
+                            semanticLabel: 'Cualquier gasto en salud',
+                          ),
+                          Text('Salud'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'gastos',
-                      child: Text('Gastos'),
+                      value: 'Gastos',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.money,
+                            color: Colors.green,
+                            size: 24.0,
+                            semanticLabel: 'Cualquier tipo de Gasto',
+                          ),
+                          Text('Gastos'),
+                        ],
+                      ),
                     ),
                     DropdownMenuItem(
-                      value: 'suscripciones',
-                      child: Text('Suscripciones'),
+                      value: 'Suscripciones',
+                      child: Row(
+                        children: [
+                        Icon(
+                        Icons.subscriptions,
+                        color: Colors.pink,
+                        size: 24.0,
+                        semanticLabel: 'Cualquier tipo de Suscripciones',
+                      ),
+                          Text('Suscripciones'),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -219,7 +296,7 @@ class _SecondViewState extends State<SecondView> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('Todos los campos son obligatorios'),
-                      width: 200,
+                      width: 280,
                       backgroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -235,7 +312,14 @@ class _SecondViewState extends State<SecondView> {
                   Navigator.of(context).pop();
                 } else {
                   setState(() {
-                    nuevaCantidad <= widget.capital ? listaGastos.add(Gasto(nombre: nuevoNombre, cantidad: nuevaCantidad, tipos: nuevoTipos)) : null;
+                    nuevaCantidad <= widget.capital
+                        ? listaGastos.add(Gasto(
+                            nombre: nuevoNombre,
+                            cantidad: nuevaCantidad,
+                            tipos: nuevoTipos,
+                            estado: saldo.isNegative ? true : false,
+                            ))
+                        : null;
                   });
                   Navigator.of(context).pop();
                 }
@@ -267,90 +351,103 @@ class _SecondViewState extends State<SecondView> {
         child: Container(
           padding: const EdgeInsets.all(20),
           child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  title: Text('Capital:  ${widget.capital} ', style: const TextStyle(fontSize: 20)),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money_off),
-                  title: Text('Gasto:  $totalGastado ', style: const TextStyle(fontSize: 20)),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  title: Text('Disponible:  $disponible ', style: const TextStyle(fontSize: 20)),
-                ),
-                const SizedBox(height: 16),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 200,
-                      padding: const EdgeInsets.all(16),
-                      child: MyPieChart(capital: widget.capital, gasto: gasto),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 40),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const SizedBox(height: 16),
-                            Visibility(
-                              visible: reiniciar,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    gasto = 0.0;
-                                    reiniciar = false;
-                                  });
-                                },
-                                child: const Text(
-                                  "Reiniciar",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: const Icon(Icons.money),
+                    title: Text('Capital:  ${widget.capital} ', style: const TextStyle(fontSize: 20)),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.money_off),
+                    title: Text('Gasto:  $totalGastado ', style: const TextStyle(fontSize: 20)),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.money),
+                    title: Text('Disponible:  $disponible ', style: const TextStyle(fontSize: 20)),
+                  ),
+                  const SizedBox(height: 16),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 200,
+                        height: 200,
+                        padding: const EdgeInsets.all(16),
+                        child: MyPieChart(disponible: widget.capital, gasto: totalGastado),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 40),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const SizedBox(height: 16),
+                              Visibility(
+                                visible: reiniciar,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      gasto = 0.0;
+                                      reiniciar = false;
+                                    });
+                                  },
+                                  child: const Text(
+                                    "Reiniciar",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    mostrarModalAgregarGasto();
-                  },
-                  child: const Text("Agregar Gasto"),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: listaGastos.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Gasto gasto = listaGastos[index];
-                      return Container(
-                        color:  Colors.greenAccent, // Establece el color de fondo deseado aquí
-                        child: ListTile(
-                          title: Text(gasto.nombre),
-                          subtitle: Text('Cantidad: ${gasto.cantidad}'),
-                          trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
-                        ),
-                      )
-                      ;
-                    },
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      mostrarModalAgregarGasto();
+                    },
+                    child: const Text("Agregar Gasto"),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: listaGastos.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          Gasto gasto = listaGastos[index];
+                          return Container(
+                            foregroundDecoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.blueGrey,
+                                width: 1.0,
+                              ),
+                            ),
+                            //color: !gasto.estado ? Colors.greenAccent : Colors.red, // Establece el color de fondo deseado aquí
+                            child:  ListTile(
+                              title: Text(gasto.nombre),
+                              subtitle: Text('Cantidad: ${gasto.cantidad}'),
+                              trailing: Text('Tipo: ${gasto.tipos.join(', ')}'),
+                            ),
+                          )
+                          ;
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

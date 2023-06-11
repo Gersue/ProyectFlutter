@@ -437,15 +437,15 @@ class _SecondViewState extends State<SecondView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ListTile(
-                    leading: const Icon(Icons.money),
+                    leading: const Icon(Icons.diamond_outlined, color: Colors.yellow, size: 30.0),
                     title: Text('Capital:  ${widget.capital} ', style: const TextStyle(fontSize: 20)),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.money_off),
+                    leading: const Icon(Icons.money_off, color: Colors.green, size: 30.0),
                     title: Text('Gasto:  $totalGastado ', style: const TextStyle(fontSize: 20)),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.money),
+                    leading: const Icon(Icons.payments, color: Colors.green, size: 30.0),
                     title: Text('Disponible:  $disponible ', style: const TextStyle(fontSize: 20)),
                   ),
                   const SizedBox(height: 16),

@@ -659,7 +659,15 @@ class _SecondViewState extends State<SecondView> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: !listaGastos.isEmpty ? ListView.builder(
+                      child: listaGastos.isEmpty ? const Center(
+                        child: Text(
+                          "No hay Gastos",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ): ListView.builder(
                         shrinkWrap: true,
                         itemCount: listaGastos.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -678,14 +686,6 @@ class _SecondViewState extends State<SecondView> {
                           )
                           ;
                         },
-                      ) : const Center(
-                        child: Text(
-                          "No hay Gastos",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       )
                     ),
                   ),

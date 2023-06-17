@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'ingresarCapital.dart';
+import 'myPieChart.dart';
 
 void main() {
   runApp(const MyApp());

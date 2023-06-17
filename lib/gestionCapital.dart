@@ -372,73 +372,62 @@ class _SecondViewState extends State<SecondView> {
         backgroundColor: Colors.black,
         title: const Text('Control de Presupuesto'),
       ),
-      body: SafeArea(
+      body: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Flexible(
-              fit: FlexFit.loose,
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            minVerticalPadding: 0,
-                            contentPadding: const EdgeInsets.all(1),
-                            leading: const Icon(Icons.diamond_outlined, color: Colors.yellow, size: 30.0),
-                            title: Text(
-                              'Capital: ${widget.capital.toStringAsFixed(2)}',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          ListTile(
-                            minVerticalPadding: 0,
-                            contentPadding: const EdgeInsets.all(1),
-                            leading: const Icon(Icons.money_off, color: Colors.green, size: 30.0),
-                            title: Text(
-                              'Gasto: ${totalGastado.toStringAsFixed(2)}',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          ListTile(
-                            minVerticalPadding: 0,
-                            contentPadding: const EdgeInsets.all(1),
-                            leading: const Icon(Icons.payments, color: Colors.green, size: 30.0),
-                            title: Text(
-                              'Disponible: ${disponible.toStringAsFixed(2)}',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      minVerticalPadding: 0,
+                      contentPadding: const EdgeInsets.all(1),
+                      leading: const Icon(Icons.diamond_outlined, color: Colors.yellow, size: 30.0),
+                      title: Text(
+                        'Capital: ${widget.capital.toStringAsFixed(2)}',
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
-                  ),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(30),
-                          child: Container(
-                            margin: const EdgeInsets.all(20),
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              child: MyPieChart(disponible: widget.capital, gasto: totalGastado),
-                            ),
-                          ),
-                        ),
-                      ],
+                    ListTile(
+                      minVerticalPadding: 0,
+                      contentPadding: const EdgeInsets.all(1),
+                      leading: const Icon(Icons.money_off, color: Colors.green, size: 30.0),
+                      title: Text(
+                        'Gasto: ${totalGastado.toStringAsFixed(2)}',
+                        style: const TextStyle(fontSize: 20),
+                      ),
                     ),
-                  ),
-                ],
+                    ListTile(
+                      minVerticalPadding: 0,
+                      contentPadding: const EdgeInsets.all(1),
+                      leading: const Icon(Icons.payments, color: Colors.green, size: 30.0),
+                      title: Text(
+                        'Disponible: ${disponible.toStringAsFixed(2)}',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
+            const SizedBox(height: 16),
+            Center(
+              child: Container(
+                width: 200,
+                height: 200,
+                padding: const EdgeInsets.all(16),
+                child: MyPieChart(disponible: widget.capital, gasto: totalGastado),
+              ),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 mostrarModalAgregarGasto();
@@ -446,8 +435,8 @@ class _SecondViewState extends State<SecondView> {
               child: const Text("Agregar Gasto"),
             ),
             const SizedBox(height: 16),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: DropdownButtonFormField<String>(
                 onChanged: (value) {
                   setState(() {
@@ -610,7 +599,6 @@ class _SecondViewState extends State<SecondView> {
           ],
         ),
       ),
-
     );
   }
 }

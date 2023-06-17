@@ -374,64 +374,71 @@ class _SecondViewState extends State<SecondView> {
       ),
       body: SafeArea(
         child: Column(
-
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Flexible(
               fit: FlexFit.loose,
               flex: 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child: ListTile(
-                      minVerticalPadding: 0,
-                      contentPadding: const EdgeInsets.all(1),
-                      leading: const Icon(Icons.diamond_outlined, color: Colors.yellow, size: 30.0),
-                      title: Text(
-                        'Capital: ${widget.capital.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            minVerticalPadding: 0,
+                            contentPadding: const EdgeInsets.all(1),
+                            leading: const Icon(Icons.diamond_outlined, color: Colors.yellow, size: 30.0),
+                            title: Text(
+                              'Capital: ${widget.capital.toStringAsFixed(2)}',
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          ListTile(
+                            minVerticalPadding: 0,
+                            contentPadding: const EdgeInsets.all(1),
+                            leading: const Icon(Icons.money_off, color: Colors.green, size: 30.0),
+                            title: Text(
+                              'Gasto: ${totalGastado.toStringAsFixed(2)}',
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          ListTile(
+                            minVerticalPadding: 0,
+                            contentPadding: const EdgeInsets.all(1),
+                            leading: const Icon(Icons.payments, color: Colors.green, size: 30.0),
+                            title: Text(
+                              'Disponible: ${disponible.toStringAsFixed(2)}',
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: ListTile(
-                      minVerticalPadding: 0,
-                      contentPadding: const EdgeInsets.all(1),
-                      leading: const Icon(Icons.money_off, color: Colors.green, size: 30.0),
-                      title: Text(
-                        'Gasto: ${totalGastado.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListTile(
-                      minVerticalPadding: 0,
-                      contentPadding: const EdgeInsets.all(1),
-                      leading: const Icon(Icons.payments, color: Colors.green, size: 30.0),
-                      title: Text(
-                        'Disponible: ${disponible.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(30),
+                          child: Container(
+                            margin: const EdgeInsets.all(20),
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              child: MyPieChart(disponible: widget.capital, gasto: totalGastado),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 200,
-                  height: 200,
-                  padding: const EdgeInsets.all(16),
-                  child: MyPieChart(disponible: widget.capital, gasto: totalGastado),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+
             ElevatedButton(
               onPressed: () {
                 mostrarModalAgregarGasto();
@@ -439,130 +446,133 @@ class _SecondViewState extends State<SecondView> {
               child: const Text("Agregar Gasto"),
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              onChanged: (value) {
-                setState(() {
-                  tipo = value!;
-                });
-              },
-              value: 'Todos',
-              decoration: const InputDecoration(
-                labelText: 'Filtra por tipo de gasto',
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: DropdownButtonFormField<String>(
+                onChanged: (value) {
+                  setState(() {
+                    tipo = value!;
+                  });
+                },
+                value: 'Todos',
+                decoration: const InputDecoration(
+                  labelText: 'Filtra por tipo de gasto',
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'Todos',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.align_horizontal_left,
+                          color: Colors.cyan,
+                          size: 24.0,
+                          semanticLabel: 'Todos',
+                        ),
+                        Text('Todos'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Ahorrar',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.money,
+                          color: Colors.green,
+                          size: 24.0,
+                          semanticLabel: 'Ahorros',
+                        ),
+                        Text('Ahorrar'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Comida',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.food_bank,
+                          color: Colors.orange,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier tipo de Comida',
+                        ),
+                        Text('Comida'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Casa',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.blue,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier tipo de gasto en casa',
+                        ),
+                        Text('Casa'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Entretenimiento',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.sports_esports,
+                          color: Colors.black,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier tipo de Entretenimiento',
+                        ),
+                        Text('Entretenimiento'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Salud',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.local_hospital,
+                          color: Colors.red,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier gasto en salud',
+                        ),
+                        Text('Salud'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Gastos',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.money,
+                          color: Colors.green,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier tipo de Gasto',
+                        ),
+                        Text('Gastos'),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Suscripciones',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.subscriptions,
+                          color: Colors.pink,
+                          size: 24.0,
+                          semanticLabel: 'Cualquier tipo de Suscripciones',
+                        ),
+                        Text('Suscripciones'),
+                      ],
+                    ),
+                  )
+                ],
               ),
-              items: const [
-                DropdownMenuItem(
-                  value: 'Todos',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.align_horizontal_left,
-                        color: Colors.cyan,
-                        size: 24.0,
-                        semanticLabel: 'Todos',
-                      ),
-                      Text('Todos'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Ahorrar',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.money,
-                        color: Colors.green,
-                        size: 24.0,
-                        semanticLabel: 'Ahorros',
-                      ),
-                      Text('Ahorrar'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Comida',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.food_bank,
-                        color: Colors.orange,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier tipo de Comida',
-                      ),
-                      Text('Comida'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Casa',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.home,
-                        color: Colors.blue,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier tipo de gasto en casa',
-                      ),
-                      Text('Casa'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Entretenimiento',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.sports_esports,
-                        color: Colors.black,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier tipo de Entretenimiento',
-                      ),
-                      Text('Entretenimiento'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Salud',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.local_hospital,
-                        color: Colors.red,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier gasto en salud',
-                      ),
-                      Text('Salud'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Gastos',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.money,
-                        color: Colors.green,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier tipo de Gasto',
-                      ),
-                      Text('Gastos'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'Suscripciones',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.subscriptions,
-                        color: Colors.pink,
-                        size: 24.0,
-                        semanticLabel: 'Cualquier tipo de Suscripciones',
-                      ),
-                      Text('Suscripciones'),
-                    ],
-                  ),
-                )
-              ],
             ),
             Expanded(
               child: Padding(
@@ -600,6 +610,7 @@ class _SecondViewState extends State<SecondView> {
           ],
         ),
       ),
+
     );
   }
 }
